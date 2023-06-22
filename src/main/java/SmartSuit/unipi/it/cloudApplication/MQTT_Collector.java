@@ -13,6 +13,16 @@ import java.util.LinkedList;
 
 public class MQTT_Collector implements MqttCallback, Runnable  {
 
+    private static final MQTT_Collector instance = new MQTT_Collector();
+
+    private MQTT_Collector(){
+
+    }
+
+    public static MQTT_Collector getInstance(){
+        return instance;
+    }
+
     LinkedList<String> topic = new LinkedList<>(Arrays.asList("radiation", "gas", "electromagnetic"));;
     String broker = "tcp://127.0.0.1:1883";
     String clientId = "MQTT_Collector";
@@ -49,7 +59,7 @@ public class MQTT_Collector implements MqttCallback, Runnable  {
         }
 
         try{
-            int modified = DatabaseAccess.insertData((Float) obj.get("value"), topic);
+            int modified = DatabaseAccess.insertData((Integer) obj.get("value"), topic);
             if (modified < 1){
                 System.err.println("DataBase error: could not insert new data");
             }

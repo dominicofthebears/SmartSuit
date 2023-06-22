@@ -7,6 +7,15 @@ import java.util.Scanner;
 
 public class CommandLineInterface implements Runnable{
 
+    private static final CommandLineInterface instance = new CommandLineInterface();
+
+    private CommandLineInterface(){
+    }
+
+    public static CommandLineInterface getInstance(){
+        return instance;
+    }
+
     public void run() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to SmartSuit system management\n" +
@@ -60,8 +69,7 @@ public class CommandLineInterface implements Runnable{
         try{
             System.out.println("Would you like to turn the actuator ON or OFF?: ");
             String input = (s.nextLine().trim());
-            CoAP_Client.actuatorCall(DatabaseAccess.retrieveActuator(actuator), actuator, input, false);
-            System.out.println("Value changed");
+            CoAP_Client.actuatorCall(DatabaseAccess.retrieveActuator(actuator), actuator, input, 0);
         } catch (SQLException e){
             System.out.println("Could not retrieve the actuators");
         }
@@ -69,8 +77,8 @@ public class CommandLineInterface implements Runnable{
     }
 
     private static void changeThreshold(String sensor, Scanner s) {
-        System.out.println("Insert the new value in float format: ");
-        float input = Float.parseFloat(s.nextLine().trim());
+        System.out.println("Insert the new value: ");
+        int input = Integer.parseInt(s.nextLine().trim());
         switch (sensor){
             case "radiation":
                 PeriodicDataRetrieval.setRadiationThreshold(input);

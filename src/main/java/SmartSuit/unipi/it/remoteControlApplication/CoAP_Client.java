@@ -8,10 +8,11 @@ import org.json.simple.JSONObject;
 
 public class CoAP_Client {
 
-    public static void actuatorCall(String ip, String resource, String action, boolean overThreshold) {
+    public static void actuatorCall(String ip, String resource, String action, int overThreshold) {
 
-        if(action == "OFF" && overThreshold){
+        if(action == "OFF" && overThreshold == 1){
             System.out.println("Cannot turn off the actuator: there's a danger situation");
+            return;
         }
 
         CoapClient client = new CoapClient("coap://" + ip + "/" + resource);
