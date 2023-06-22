@@ -29,7 +29,7 @@ public class DatabaseAccess {
         return result;
     }
 
-    public static int insertData(Float value, String type) throws SQLException {
+    public static int insertData(Integer value, String type) throws SQLException {
         Connection connection = DriverManager.getConnection(url, username, password);
         PreparedStatement ps = connection.prepareStatement("INSERT INTO data (value, sensor, timestamp) VALUES(?,?,?);");
         ps.setString(1, String.valueOf(value)); //substring(1)
@@ -39,13 +39,13 @@ public class DatabaseAccess {
         return ps.getUpdateCount();
     }
 
-    public static HashMap<String, Float> retrieveData() throws SQLException{
-        HashMap<String, Float> result = new HashMap<String, Float>();
+    public static HashMap<String, Integer> retrieveData() throws SQLException{
+        HashMap<String, Integer> result = new HashMap<>();
         Connection connection = DriverManager.getConnection(url, username, password);
         PreparedStatement ps = connection.prepareStatement("SELECT value, sensor, MAX(timestamp) FROM data GROUP BY sensor");
         ResultSet rs = ps.executeQuery();
         while(rs.next()){
-               result.put(rs.getString("sensor"), rs.getFloat("value"));
+               result.put(rs.getString("sensor"), rs.getInt("value"));
         }
         rs.close();
         return result;
