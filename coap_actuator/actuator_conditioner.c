@@ -112,19 +112,19 @@ PROCESS_THREAD(conditioner_thread, ev, data)
         }
         else{
             if (leds_get() & LEDS_RED) {
-                printf("LEDS_RED is on\n");
+                //printf("LEDS_RED is on\n");
                 strcpy(led_on_color,"red");
             } else {
-                    printf("LEDS_RED is off\n");
+                    //printf("LEDS_RED is off\n");
             }
 
             if (leds_get() & LEDS_GREEN) {
-                    printf("LEDS_GREEN is on\n");
+                    //printf("LEDS_GREEN is on\n");
                     strcpy(led_on_color,"green");
             } else {
-                    printf("LEDS_GREEN is off\n");
+                    //printf("LEDS_GREEN is off\n");
             }
-            printf("led on is:%s\n",led_on_color);
+            //printf("led on is:%s\n",led_on_color);
 
             //printf("size %zu %zu\n",strlen(led_on_color),strlen("red"));
             

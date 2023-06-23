@@ -59,7 +59,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
     if(value_int==1){
           //critic value of gas, and the action on led and emshield are obliged
           leds_on(LEDS_RED);
-          LOG_INFO("start emshield because electromagnetic value critic");
+          LOG_INFO("start emshield because electromagnetic value critic\n");
           //coap_set_status_code(response, CHANGED_2_04);
           leds_on(LEDS_YELLOW);
         
@@ -67,7 +67,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
     else{
           leds_on(LEDS_GREEN);  
           leds_off(LEDS_RED);
-          LOG_INFO("stop emshield because gas value no critic");
+          LOG_INFO("stop emshield because gas value no critic\n");
           //coap_set_status_code(response, CHANGED_2_04);
           leds_off(LEDS_YELLOW);
 
@@ -77,7 +77,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
 
               // action off 
               if (strncmp(action, "OFF", len) == 0 && emshield_status==1){
-                LOG_INFO("stop emshield because user request");
+                LOG_INFO("stop emshield because user request\n");
                 coap_set_status_code(response,CHANGED_2_04);
                 leds_off(LEDS_YELLOW);
                 emshield_status=0;
@@ -85,7 +85,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
               }
               // action on
               else if (strncmp(action, "ON", len) == 0 && emshield_status==0){
-                LOG_INFO("start emshield because user request");
+                LOG_INFO("start emshield because user request\n");
                 coap_set_status_code(response,CHANGED_2_04);
 
                 leds_on(LEDS_YELLOW);

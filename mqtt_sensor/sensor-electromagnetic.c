@@ -90,8 +90,13 @@ mqtt_status_t status;
 char broker_address[CONFIG_IP_ADDR_STR_LEN];
 /*Simulation of sensing em------------------------------------------------------*/
 
-static uint8_t min_em_parameter = 65.0;
-static uint8_t max_em_parameter = 225.0;
+static uint8_t min_em_parameter = 65;
+static uint8_t max_em_parameter = 225;
+static int em_sensed=0;
+static bool increment=true; //true increment of em value, and false decrement
+
+#define VARIATION_EM 7
+
 
 static void sensing_em(void* ptr){
     // Publish something
@@ -99,7 +104,20 @@ static void sensing_em(void* ptr){
      printf("Publishing to topic %s!\n",sub_topic);
 
 
-      int em_sensed = min_em_parameter + (rand() % (max_em_parameter - min_em_parameter + 1));
+      //int em_sensed = min_em_parameter + (rand() % (max_em_parameter - min_em_parameter + 1));
+
+      if(increment){
+        em_sensed+=VARIATION_EM;
+        if(em_sensed>=max_em_parameter){
+            increment=false;
+        }
+      }
+      else{
+          em_sensed-=VARIATION_EM;
+          if(em_sensed<=min_em_parameter){
+              increment=true;
+          }
+      }
 
 
 		  sprintf(pub_topic, "%s", "sensor_em");
@@ -195,6 +213,7 @@ PROCESS_THREAD(mqtt_client_em, ev, data)
 {
 
   PROCESS_BEGIN();
+  em_sensed=min_em_parameter;
   
   printf("MQTT Client em\n");
 

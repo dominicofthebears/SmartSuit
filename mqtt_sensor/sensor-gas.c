@@ -94,14 +94,32 @@ char broker_address[CONFIG_IP_ADDR_STR_LEN];
 static uint8_t  min_gas_parameter = 25;
 static uint8_t  max_gas_parameter = 75;
 
+static int gas_sensed=0;
+static bool increment=true; //true increment of gas value, and false decrement
+
+#define VARIATION_GAS 3
+
+
+
 static void sensing_gas(void* ptr){
     // Publish something
 
-     printf("Publishing to topic %s!\n",sub_topic);
+      printf("Publishing to topic %s!\n",sub_topic);
 
-  
-
-      int gas_sensed = min_gas_parameter + (rand() % (max_gas_parameter - min_gas_parameter + 1));
+      //int gas_sensed = min_gas_parameter + (rand() % (max_gas_parameter - min_gas_parameter + 1));
+      
+      if(increment){
+        gas_sensed+=VARIATION_GAS;
+        if(gas_sensed>=max_gas_parameter){
+            increment=false;
+        }
+      }
+      else{
+          gas_sensed-=VARIATION_GAS;
+          if(gas_sensed<=min_gas_parameter){
+              increment=true;
+          }
+      }
 
 
 		  sprintf(pub_topic, "%s", "sensor_gas");
@@ -197,6 +215,7 @@ PROCESS_THREAD(mqtt_client_gas, ev, data)
 {
 
   PROCESS_BEGIN();
+  gas_sensed=min_gas_parameter;
   
   printf("MQTT Client Gas\n");
 

@@ -93,14 +93,30 @@ char broker_address[CONFIG_IP_ADDR_STR_LEN];
 static uint8_t min_radiation_parameter = 120;
 static uint8_t max_radiation_parameter = 175;
 
+static int radiation_sensed=0;
+static bool increment=true; //true increment of em value, and false decrement
+
+#define VARIATION_RADIATION 5
+
 static void sensing_radiation(void* ptr){
     // Publish something
 
      printf("Publishing to topic %s!\n",sub_topic);
 
 
-      int radiation_sensed = min_radiation_parameter + (rand() % (max_radiation_parameter - min_radiation_parameter + 1));
-      
+      //int radiation_sensed = min_radiation_parameter + (rand() % (max_radiation_parameter - min_radiation_parameter + 1));
+      if(increment){
+        radiation_sensed+=VARIATION_RADIATION;
+        if(radiation_sensed>=max_radiation_parameter){
+            increment=false;
+        }
+      }
+      else{
+          radiation_sensed-=VARIATION_RADIATION;
+          if(radiation_sensed<=min_radiation_parameter){
+              increment=true;
+          }
+      }
 
 		  sprintf(pub_topic, "%s", "sensor_radiation");
 			
@@ -195,6 +211,7 @@ PROCESS_THREAD(mqtt_client_radiation, ev, data)
 {
 
   PROCESS_BEGIN();
+  radiation_sensed=min_radiation_parameter;
   
   printf("MQTT Client radiation\n");
 

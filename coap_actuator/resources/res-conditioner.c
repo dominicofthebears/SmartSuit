@@ -78,7 +78,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
           //critic value of gas, and the action on led and conditioner are obliged
           leds_on(LEDS_RED);
           leds_off(LEDS_GREEN);
-          LOG_INFO("start conditioner because gas value critic");
+          LOG_INFO("start conditioner because gas value critic\n");
           //coap_set_status_code(response, CHANGED_2_04);
           leds_on(LEDS_YELLOW);
         
@@ -87,7 +87,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
         
           leds_on(LEDS_GREEN);
           leds_off(LEDS_RED);
-          LOG_INFO("stop conditioner because gas value no critic");
+          LOG_INFO("stop conditioner because gas value no critic\n");
           //coap_set_status_code(response, CHANGED_2_04);
           leds_off(LEDS_YELLOW);
 
@@ -97,7 +97,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
 
               // action off 
               if (strncmp(action, "OFF", len) == 0 && conditioner_status==1){
-                LOG_INFO("stop conditioner because user request");
+                LOG_INFO("stop conditioner because user request\n");
                 coap_set_status_code(response,CHANGED_2_04);
                 leds_off(LEDS_YELLOW);
                 conditioner_status=0;
@@ -105,7 +105,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
               }
               // action on
               else if (strncmp(action, "ON", len) == 0 && conditioner_status==0){
-                LOG_INFO("start conditioner because user request");
+                LOG_INFO("start conditioner because user request\n");
                 coap_set_status_code(response,CHANGED_2_04);
 
                 leds_on(LEDS_YELLOW);
