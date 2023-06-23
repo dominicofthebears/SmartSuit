@@ -29,8 +29,15 @@ public class PeriodicDataRetrieval implements Runnable{ //singleton class
             }
             else{
                 for(String key : values.keySet()){
+                    HashMap<String, String> act = DatabaseAccess.retrieveActuator(key);
                     if(values.get(key) > thresholds.get(key)){
-                        CoAP_Client.actuatorCall(DatabaseAccess.retrieveActuator(key), key, "ON", 1);
+                        CoAP_Client.setIsDanger(key, true);
+                        if(act.get("status").equals("OFF")){
+                            CoAP_Client.actuatorCall(act.get("ip"), key, "ON", 1);
+                        }
+                    }
+                    else{
+                        CoAP_Client.setIsDanger(key, false);
                     }
                 }
             }

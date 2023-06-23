@@ -1,19 +1,32 @@
 package SmartSuit.unipi.it.remoteControlApplication;
 
+import SmartSuit.unipi.it.DatabaseAccess;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.json.simple.JSONObject;
 
+import java.sql.SQLException;
+import java.util.HashMap;
+
 public class CoAP_Client {
 
-    public static void actuatorCall(String ip, String resource, String action, int overThreshold) {
+    private static HashMap<String, Boolean> isDanger = new HashMap<>();
 
-        if(action == "OFF" && overThreshold == 1){
-            System.out.println("Cannot turn off the actuator: there's a danger situation");
+    static{
+        isDanger.put("radiation", false);
+        isDanger.put("gas", false);
+        isDanger.put("electromagnetic", false);
+    }
+
+    public static void actuatorCall(String ip, String resource, String action, int overThreshold) throws SQLException {
+
+        if(isDanger.get(resource) && action.equals("OFF")){
+            System.out.println("There is a danger, you cannot turn off the actuator");
             return;
         }
+
 
         CoapClient client = new CoapClient("coap://" + ip + "/" + resource);
 
@@ -29,14 +42,20 @@ public class CoAP_Client {
             CoAP.ResponseCode code = response.getCode();
             switch (code) {
                 case CHANGED:
-                    System.out.println("State correctly changed");
+                    System.out.println("State correctly changed because of danger or user input");
+                    DatabaseAccess.updateActuators(ip, resource, action);
                     break;
                 case BAD_OPTION:
-                    System.err.println("The actuator is already in this status");
+                    System.err.println("Parameters error");
                     break;
             }
 
         }
     }
+
+    public static void setIsDanger(String danger, boolean val){
+        isDanger.put(danger, val);
+    }
+
 }
 
