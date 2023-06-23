@@ -3,6 +3,8 @@ package SmartSuit.unipi.it.remoteControlApplication;
 import SmartSuit.unipi.it.DatabaseAccess;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class CommandLineInterface implements Runnable{
@@ -69,7 +71,13 @@ public class CommandLineInterface implements Runnable{
         try{
             System.out.println("Would you like to turn the actuator ON or OFF?: ");
             String input = (s.nextLine().trim());
-            CoAP_Client.actuatorCall(DatabaseAccess.retrieveActuator(actuator), actuator, input, 0);
+            HashMap<String, String> act = DatabaseAccess.retrieveActuator(actuator);
+            if(Objects.equals(act.get("status"), input)){
+                System.out.println("Actuator already in this status");
+            }
+            else {
+                CoAP_Client.actuatorCall(act.get("ip"), actuator, input, 0);
+            }
         } catch (SQLException e){
             System.out.println("Could not retrieve the actuators");
         }

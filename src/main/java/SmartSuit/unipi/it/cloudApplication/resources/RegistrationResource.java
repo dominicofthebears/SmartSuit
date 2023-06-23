@@ -34,7 +34,7 @@ public class RegistrationResource extends CoapResource {
         System.out.println("The actuator with ip" + address + " is registering");
 
         try {
-            int modified = DatabaseAccess.updateCollectors(address.toString(), (String) obj.get("type"));
+            int modified = DatabaseAccess.updateActuators(address.toString(), (String) obj.get("type"), "OFF"); //assuming actuators start in OFF state
             if(modified < 1){
                 response = new Response(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
             }else{

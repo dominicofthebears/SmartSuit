@@ -9,22 +9,25 @@ public class DatabaseAccess {
     private static final String username = "root";
     private static final String password = "smartsuit";
 
-    public static int updateCollectors(String address, String actuatorType) throws SQLException {
+    public static int updateActuators(String address, String actuatorType, String status) throws SQLException {
         Connection connection = DriverManager.getConnection(url, username, password);
-        PreparedStatement ps = connection.prepareStatement("REPLACE INTO actuators (ip, actuator_type) VALUES(?,?);");
+        PreparedStatement ps = connection.prepareStatement("REPLACE INTO actuators (ip, actuator_type, status) VALUES(?,?,?);");
         ps.setString(1, address); //substring(1)
         ps.setString(2, actuatorType);
+        ps.setString(3, status);
         ps.executeUpdate();
         return ps.getUpdateCount();
     }
 
-    public static String retrieveActuator(String actuatorType) throws SQLException {
+    public static HashMap<String, String> retrieveActuator(String actuatorType) throws SQLException {
+        HashMap<String, String> result = new HashMap<>();
         Connection connection = DriverManager.getConnection(url, username, password);
         PreparedStatement ps = connection.prepareStatement("SELECT ip FROM actuators WHERE actuator_type = ?");
         ps.setString(1, actuatorType);
         ResultSet rs = ps.executeQuery();
         rs.next();
-        String result = rs.getString("ip");
+        result.put("ip", rs.getString("ip"));
+        result.put("status", rs.getString("status"));
         rs.close();
         return result;
     }
