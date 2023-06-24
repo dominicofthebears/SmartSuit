@@ -29,10 +29,11 @@ public class PeriodicDataRetrieval implements Runnable{ //singleton class
             }
             else{
                 for(String key : values.keySet()){
-                    HashMap<String, String> act = DatabaseAccess.retrieveActuator(key);
                     if(values.get(key) > thresholds.get(key)){
+                        HashMap<String, String> act = DatabaseAccess.retrieveActuator(key);
                         CoAP_Client.setIsDanger(key, true);
                         if(act.get("status").equals("OFF")){
+                            System.err.println("Danger detected on " + key + " sensor, advertising the actuator");
                             CoAP_Client.actuatorCall(act.get("ip"), key, "ON", 1);
                         }
                     }
@@ -42,7 +43,7 @@ public class PeriodicDataRetrieval implements Runnable{ //singleton class
                 }
             }
         }catch (SQLException e){
-            System.out.println("Database error");
+            System.err.println("Database error");
         }finally {
             Thread.currentThread().interrupt();
         }

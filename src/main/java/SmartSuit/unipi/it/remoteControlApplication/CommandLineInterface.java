@@ -28,9 +28,11 @@ public class CommandLineInterface implements Runnable{
                 "4 - Select a new value for the electromagnetic threshold\n" +
                 "5 - Change the status of the radiation shield\n" +
                 "6 - Change the status of the oxygen flow system\n" +
-                "7 - Change the status of the electromagnetic shield");
+                "7 - Change the status of the electromagnetic shield\n" +
+                "8 - Check the actuators status");
         while (true){
 
+            System.out.println("Insert a command: ");
             int input = Integer.parseInt(scanner.nextLine().trim());
 
             switch (input){
@@ -62,9 +64,25 @@ public class CommandLineInterface implements Runnable{
                 case 7:
                     changeStatus("electromagnetic", scanner);
                     break;
+
+                case 8:
+                    printActuatorsStatus();
+                    break;
             }
         }
 
+    }
+
+    private static void printActuatorsStatus() {
+        HashMap<String, Boolean> danger = CoAP_Client.getIsDanger();
+        for(String key: danger.keySet()){
+            if(danger.get(key)){
+                System.out.println("The " + key + " sensor is: ON");
+            }
+            else{
+                System.out.println("The " + key + " sensor is: OFF");
+            }
+        }
     }
 
     private static void changeStatus(String actuator, Scanner s) {

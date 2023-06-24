@@ -23,10 +23,9 @@ public class CoAP_Client {
     public static void actuatorCall(String ip, String resource, String action, int overThreshold) throws SQLException {
 
         if(isDanger.get(resource) && action.equals("OFF")){
-            System.out.println("There is a danger, you cannot turn off the actuator");
+            System.err.println("There is a danger, you cannot turn off the actuator");
             return;
         }
-
 
         CoapClient client = new CoapClient("coap://" + ip + "/" + resource);
 
@@ -37,12 +36,12 @@ public class CoAP_Client {
         CoapResponse response = client.put(object.toJSONString(), MediaTypeRegistry.APPLICATION_JSON);
 
         if (response == null) {
-            System.out.println("An error occurred while contacting the actuator");
+            System.err.println("An error occurred while contacting the actuator");
         } else {
             CoAP.ResponseCode code = response.getCode();
             switch (code) {
                 case CHANGED:
-                    System.out.println("State correctly changed because of danger or user input");
+                    System.err.println("State correctly changed because of danger or user input");
                     DatabaseAccess.updateActuators(ip, resource, action);
                     break;
                 case BAD_OPTION:
@@ -56,6 +55,8 @@ public class CoAP_Client {
     public static void setIsDanger(String danger, boolean val){
         isDanger.put(danger, val);
     }
+
+    public static HashMap<String, Boolean> getIsDanger(){return isDanger;}
 
 }
 
