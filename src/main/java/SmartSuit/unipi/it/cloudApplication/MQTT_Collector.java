@@ -47,7 +47,7 @@ public class MQTT_Collector implements MqttCallback, Runnable  {
     }
 
     @Override
-    public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+    public void messageArrived(String topic, MqttMessage mqttMessage) {
         JSONObject obj;
         JSONParser parser = new JSONParser();
 

@@ -18,7 +18,7 @@ public class EntryPoint {
             executorService.schedule(CommandLineInterface.getInstance(), 5, TimeUnit.SECONDS);
             executorService.schedule(CoAP_Registration.getInstance(), 0, TimeUnit.SECONDS);
             executorService.schedule(MQTT_Collector.getInstance(), 0, TimeUnit.SECONDS);
-            executorService.scheduleAtFixedRate(PeriodicDataRetrieval.getInstance(), 7, 10, TimeUnit.SECONDS);
+            executorService.scheduleAtFixedRate(PeriodicDataRetrieval.getInstance(), 20, 7, TimeUnit.SECONDS);
         } catch (Exception e) {
             executorService.shutdown();
         }

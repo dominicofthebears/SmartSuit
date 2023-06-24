@@ -22,7 +22,7 @@ public class DatabaseAccess {
     public static HashMap<String, String> retrieveActuator(String actuatorType) throws SQLException {
         HashMap<String, String> result = new HashMap<>();
         Connection connection = DriverManager.getConnection(url, username, password);
-        PreparedStatement ps = connection.prepareStatement("SELECT ip FROM actuators WHERE actuator_type = ?");
+        PreparedStatement ps = connection.prepareStatement("SELECT ip, status FROM actuators WHERE actuator_type = ?");
         ps.setString(1, actuatorType);
         ResultSet rs = ps.executeQuery();
         rs.next();
