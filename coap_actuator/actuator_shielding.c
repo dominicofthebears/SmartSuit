@@ -33,7 +33,7 @@ void client_chunk_handler(coap_message_t *response)
 
 extern coap_resource_t  res_radiation; 
 
-//static int led_on_green = 0;  //0 red led off, 1 red led on
+static int led_on = 0;  //0 red led off, 1 red led on
 
 PROCESS(shielding_thread, "shielding");
 AUTOSTART_PROCESSES(&shielding_thread);
@@ -66,7 +66,7 @@ PROCESS_THREAD(shielding_thread, ev, data)
 
   static struct etimer e_timer;
   
-  etimer_set(&e_timer, CLOCK_SECOND * 4);
+  etimer_set(&e_timer, CLOCK_SECOND * 2);
   
   //printf("Loop\n");
 
@@ -87,19 +87,36 @@ PROCESS_THREAD(shielding_thread, ev, data)
 
   while(1) {
        
-        PROCESS_WAIT_EVENT_UNTIL( ev==button_hal_press_event);
-       
+        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&e_timer) || ev==button_hal_press_event);
+        //res_conditioner.trigger();
         
         if(ev == button_hal_press_event){  
             //the red led is blinking and the button of the sensor is pressed
             btn = (button_hal_button_t *)data;
 			      printf("Press event");
-			      leds_off(LEDS_RED);
-            //led_on_green=0;
-            }
+		 
+                leds_off(LEDS_YELLOW);
+                led_on=0;
+            
 
-   }                   
-         
+        }
+        else{
+            if (leds_get() & LEDS_RED) {
+                //printf("LEDS_YELLOW is on\n");
+                led_on=1;
+            } 
+            
+            if(led_on==1){
+                //printf("rosssoooo");
+                leds_toggle(LEDS_YELLOW);
+                leds_toggle(LEDS_RED);
+            }
+            
+            etimer_set(&e_timer, CLOCK_SECOND * 2);
+
+        }
+
+  }                             
 
   PROCESS_END();
 }

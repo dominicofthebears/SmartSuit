@@ -72,6 +72,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
     if(value_int==1){
           //critic value of radiation, and the action on led and shielding are obliged
           leds_on(LEDS_RED);
+          
           leds_on(LEDS_GREEN);
           LOG_INFO("start shielding because gas value critic\n");
 
@@ -87,11 +88,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
     }
     else{
         
-          //leds_on(LEDS_GREEN);
-          //leds_off(LEDS_RED);
-          //LOG_INFO("stop shielding because gas value no critic\n");
-          //coap_set_status_code(response, CHANGED_2_04);
-          //leds_off(LEDS_YELLOW);
+          
 
           //critic value of radiation are not critic, the user can also turn on or turn off the shielding
           if ((action!=NULL && strlen(action)!=0)){
