@@ -69,7 +69,7 @@ static char sub_topic[BUFFER_SIZE];
 #define STATE_MACHINE_PERIODIC     (CLOCK_SECOND >> 1)
 static struct etimer periodic_timer;
 
-#define SENSOR_TIME 8
+#define SENSOR_TIME 7
 static struct ctimer sensing_radiation_timer;
 
 static int first_publication=1;
@@ -90,13 +90,13 @@ mqtt_status_t status;
 char broker_address[CONFIG_IP_ADDR_STR_LEN];
 /*Simulation of sensing radiation------------------------------------------------------*/
 
-static uint8_t min_radiation_parameter = 120;
-static uint8_t max_radiation_parameter = 175;
+static uint8_t min_radiation_parameter = 90;
+static uint8_t max_radiation_parameter = 105;
 
 static int radiation_sensed=0;
 static bool increment=true; //true increment of em value, and false decrement
 
-#define VARIATION_RADIATION 5
+#define VARIATION_RADIATION 2
 
 static void sensing_radiation(void* ptr){
     // Publish something
@@ -118,9 +118,9 @@ static void sensing_radiation(void* ptr){
           }
       }
 
-		  sprintf(pub_topic, "%s", "sensor_radiation");
+		  sprintf(pub_topic, "%s", "radiation");
 			
-			sprintf(app_buffer, "{ \"radiation_value\": %d }", radiation_sensed);
+			sprintf(app_buffer, "{ \"value\": %d }", radiation_sensed);
 			
 				
 			mqtt_publish(&conn, NULL, pub_topic, (uint8_t *)app_buffer,

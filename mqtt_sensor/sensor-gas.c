@@ -70,7 +70,7 @@ static char sub_topic[BUFFER_SIZE];
 #define STATE_MACHINE_PERIODIC     (CLOCK_SECOND >> 1)
 static struct etimer periodic_timer;
 
-#define SENSOR_TIME 10
+#define SENSOR_TIME 7
 static struct ctimer sensing_gas_timer;
 
 static int first_publication=1;
@@ -92,12 +92,12 @@ char broker_address[CONFIG_IP_ADDR_STR_LEN];
 /*Simulation of sensing gas------------------------------------------------------*/
 
 static uint8_t  min_gas_parameter = 25;
-static uint8_t  max_gas_parameter = 75;
+static uint8_t  max_gas_parameter = 40;
 
 static int gas_sensed=0;
 static bool increment=true; //true increment of gas value, and false decrement
 
-#define VARIATION_GAS 3
+#define VARIATION_GAS 2
 
 
 
@@ -122,9 +122,9 @@ static void sensing_gas(void* ptr){
       }
 
 
-		  sprintf(pub_topic, "%s", "sensor_gas");
+		  sprintf(pub_topic, "%s", "gas");
 			
-			sprintf(app_buffer, "{ \"gas_value\": %d }", gas_sensed);
+			sprintf(app_buffer, "{ \"value\": %d }", gas_sensed);
 			
 				
 			mqtt_publish(&conn, NULL, pub_topic, (uint8_t *)app_buffer,

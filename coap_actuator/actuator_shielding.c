@@ -31,9 +31,9 @@ void client_chunk_handler(coap_message_t *response)
         printf("|%.*s", len, (char *)chunk);
 }
 
-extern coap_resource_t  res_shielding; 
+extern coap_resource_t  res_radiation; 
 
-static int led_on_green = 0;  //0 red led off, 1 red led on
+//static int led_on_green = 0;  //0 red led off, 1 red led on
 
 PROCESS(shielding_thread, "shielding");
 AUTOSTART_PROCESSES(&shielding_thread);
@@ -50,7 +50,7 @@ PROCESS_THREAD(shielding_thread, ev, data)
     coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
     coap_set_header_uri_path(request, service_url);
     // Set the payload 
-    const char msg[] = "{\"actuator_type\":\"radiation\"}";
+    const char msg[] = "{\"type\":\"radiation\"}";
     coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
 
     COAP_BLOCKING_REQUEST(&server_ep, request, client_chunk_handler);
@@ -60,7 +60,7 @@ PROCESS_THREAD(shielding_thread, ev, data)
 
     LOG_INFO("Starting actuator against radiation\n");
 
-    coap_activate_resource(&res_shielding, "shielding");
+    coap_activate_resource(&res_radiation, "radiation");
 
 
 
@@ -68,11 +68,11 @@ PROCESS_THREAD(shielding_thread, ev, data)
   
   etimer_set(&e_timer, CLOCK_SECOND * 4);
   
-  printf("Loop\n");
+  //printf("Loop\n");
 
-  printf("%d\n",led_on_green);
+  //printf("%d\n",led_on_green);
 
-  leds_on(LEDS_GREEN);
+  //leds_on(LEDS_GREEN);
 
   button_hal_button_t *btn; 
 	
@@ -87,7 +87,7 @@ PROCESS_THREAD(shielding_thread, ev, data)
 
   while(1) {
        
-        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&e_timer) || ev==button_hal_press_event);
+        PROCESS_WAIT_EVENT_UNTIL( ev==button_hal_press_event);
        
         
         if(ev == button_hal_press_event){  
@@ -95,21 +95,8 @@ PROCESS_THREAD(shielding_thread, ev, data)
             btn = (button_hal_button_t *)data;
 			      printf("Press event");
 			      leds_off(LEDS_RED);
-            led_on_green=0;
+            //led_on_green=0;
             }
-        else{
-        
-            
-            if (leds_get() & LEDS_GREEN) {
-                    printf("LEDS_GREEN is on, so the values of the radiation field are normal\n");
-                    //led_on_green=0;
-                    leds_off(LEDS_RED);
-                    leds_off(LEDS_GREEN);
-            }
-
-            etimer_set(&e_timer, CLOCK_SECOND * 4);
-
-        }
 
    }                   
          

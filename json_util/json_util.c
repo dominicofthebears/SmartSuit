@@ -11,8 +11,8 @@ char* get_json_value_string(const char* jsonString, const char* fieldName){
 
         char* value=NULL;
 
-        printf("jsonString:%s\n",jsonString);
-        printf("fieldName:%s\n",fieldName);
+        //printf("jsonString:%s\n",jsonString);
+        //printf("fieldName:%s\n",fieldName);
 
         char string_json[50];
 
@@ -25,7 +25,7 @@ char* get_json_value_string(const char* jsonString, const char* fieldName){
         }
 
         string_json[strlen(string_json)-1]='\0';
-        printf("jsonString:%s\n",string_json);
+        //printf("jsonString:%s\n",string_json);
 
         //---------------------------------
 
@@ -34,28 +34,28 @@ char* get_json_value_string(const char* jsonString, const char* fieldName){
 
         if(strcmp(fieldName,"action")==0){
         //while (token != NULL) {
-                printf("%s\n", token);
+                //printf("%s\n", token);
                 strcpy(first_command,token);
                 //token = strtok(NULL, ",");
         }
         else if(strcmp(fieldName,"threshold")==0){
                 while (token != NULL) {
-                        printf("%s\n", token);
+                        //printf("%s\n", token);
                         strcpy(first_command,token);
                         token = strtok(NULL, ",");
                 }
         }
 
-        printf("jsonString:%s\n",first_command);
+        //printf("jsonString:%s\n",first_command);
         char* token2 = strtok(first_command, ":");
         char value_action[10];
 
         while (token2 != NULL) {
-                printf("%s\n", token2);
+                //printf("%s\n", token2);
                 strcpy(value_action,token2);
                 token2 = strtok(NULL, ":");
         }
-        printf("value:%s",value_action);
+        //printf("value:%s",value_action);
 
         value = (char*)malloc((strlen(value_action) + 1) * sizeof(char));
         if (value == NULL) {

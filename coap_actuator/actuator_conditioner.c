@@ -31,9 +31,9 @@ void client_chunk_handler(coap_message_t *response)
         printf("|%.*s", len, (char *)chunk);
 }
 
-extern coap_resource_t  res_conditioner; 
+extern coap_resource_t  res_gas; 
 
-static char led_on_color[10] = "green";
+static char led_on_color[10] = "yellow";
 
 
 PROCESS(conditioner_thread, "conditioner");
@@ -52,7 +52,7 @@ PROCESS_THREAD(conditioner_thread, ev, data)
     coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
     coap_set_header_uri_path(request, service_url);
     // Set the payload 
-    const char msg[] = "{\"actuator_type\":\"gas\"}";
+    const char msg[] = "{\"type\":\"gas\"}";
     coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
 
     COAP_BLOCKING_REQUEST(&server_ep, request, client_chunk_handler);
@@ -62,17 +62,17 @@ PROCESS_THREAD(conditioner_thread, ev, data)
 
   LOG_INFO("Starting actuator against gas\n");
 
-  coap_activate_resource(&res_conditioner, "conditioner");
+  coap_activate_resource(&res_gas, "gas");
 
   static struct etimer e_timer;
   
   etimer_set(&e_timer, CLOCK_SECOND * 2);
   
-  printf("Loop\n");
+  printf("ciao\n");
 
   printf("%s\n",led_on_color);
 
-  leds_on(LEDS_GREEN);
+  //leds_on(LEDS_GREEN);
 
   button_hal_button_t *btn; 
 	
@@ -101,13 +101,10 @@ PROCESS_THREAD(conditioner_thread, ev, data)
 			if (strcmp(led_on_color, "red") == 0) {
                 printf("Button pressed while LED is red\n");
                 
-                leds_toggle(LEDS_GREEN);
-                leds_off(LEDS_RED);
-                strcpy(led_on_color,"green");
-            } else if (strcmp(led_on_color, "green") == 0) {
-                printf("Button pressed while LED is green\n");
                 
-            }
+                leds_off(LEDS_RED);
+                strcpy(led_on_color,"yellow");
+            } 
 
         }
         else{
@@ -118,9 +115,10 @@ PROCESS_THREAD(conditioner_thread, ev, data)
                     //printf("LEDS_RED is off\n");
             }
 
-            if (leds_get() & LEDS_GREEN) {
+            if (leds_get() & LEDS_YELLOW) {
                     //printf("LEDS_GREEN is on\n");
-                    strcpy(led_on_color,"green");
+                    //situazione non critica smette di lampeggiare di rosso
+                    strcpy(led_on_color,"yellow");
             } else {
                     //printf("LEDS_GREEN is off\n");
             }
@@ -134,10 +132,10 @@ PROCESS_THREAD(conditioner_thread, ev, data)
                 leds_toggle(LEDS_RED);
                 //leds_off(LEDS_GREEN);
             }
-            else if(strcmp(led_on_color,"green")==0){
+            else if(strcmp(led_on_color,"yellow")==0){
                 //printf("greeeeeeen");
-                leds_toggle(LEDS_GREEN);
-                //leds_off(LEDS_RED);
+                //leds_toggle(LEDS_GREEN);
+                leds_off(LEDS_YELLOW);
             }
 
             

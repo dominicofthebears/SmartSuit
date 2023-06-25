@@ -90,12 +90,12 @@ mqtt_status_t status;
 char broker_address[CONFIG_IP_ADDR_STR_LEN];
 /*Simulation of sensing em------------------------------------------------------*/
 
-static uint8_t min_em_parameter = 65;
-static uint8_t max_em_parameter = 225;
+static uint8_t min_em_parameter = 30;
+static uint8_t max_em_parameter = 45;
 static int em_sensed=0;
 static bool increment=true; //true increment of em value, and false decrement
 
-#define VARIATION_EM 7
+#define VARIATION_EM 2
 
 
 static void sensing_em(void* ptr){
@@ -120,9 +120,9 @@ static void sensing_em(void* ptr){
       }
 
 
-		  sprintf(pub_topic, "%s", "sensor_em");
+		  sprintf(pub_topic, "%s", "electromagnetic");
 			
-			sprintf(app_buffer, "{ \"em_value\": %d }", em_sensed);
+			sprintf(app_buffer, "{ \"value\": %d }", em_sensed);
 			
 				
 			mqtt_publish(&conn, NULL, pub_topic, (uint8_t *)app_buffer,

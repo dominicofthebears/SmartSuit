@@ -31,9 +31,9 @@ void client_chunk_handler(coap_message_t *response)
         printf("|%.*s", len, (char *)chunk);
 }
 
-extern coap_resource_t  res_emshield; 
+extern coap_resource_t  res_electromagnetic; 
 
-static int led_on_red = 0;  //0 red led off, 1 red led on
+static int led_on = 0;  //0 red led off, 1 red led on
 
 
 PROCESS(emshield_thread, "emshield");
@@ -51,7 +51,7 @@ PROCESS_THREAD(emshield_thread, ev, data)
     coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
     coap_set_header_uri_path(request, service_url);
     // Set the payload 
-    const char msg[] = "{\"actuator_type\":\"electromagnetic\"}";
+    const char msg[] = "{\"type\":\"electromagnetic\"}";
     coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
 
     COAP_BLOCKING_REQUEST(&server_ep, request, client_chunk_handler);
@@ -61,17 +61,17 @@ PROCESS_THREAD(emshield_thread, ev, data)
 
   LOG_INFO("Starting actuator against anomalous electromagnetic field\n");
 
-  coap_activate_resource(&res_emshield, "emshield");
+  coap_activate_resource(&res_electromagnetic, "electromagnetic");
 
   static struct etimer e_timer;
   
   etimer_set(&e_timer, CLOCK_SECOND * 2);
   
-  printf("Loop\n");
+  //printf("ciao\n");
 
-  printf("%d\n",led_on_red);
+  //printf("%s\n",led_on_color);
 
-  leds_on(LEDS_GREEN);
+  //leds_on(LEDS_GREEN);
 
   button_hal_button_t *btn; 
 	
@@ -85,37 +85,48 @@ PROCESS_THREAD(emshield_thread, ev, data)
   }
 
   while(1) {
-       
+       //PROCESS_WAIT_EVENT();
+	
+    //if(ev == PROCESS_EVENT_TIMER && data == &e_timer){
+        //printf("Event triggered\n");
+         // Wait until the timer expires or an event occurs
         PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&e_timer) || ev==button_hal_press_event);
-       
+        //res_conditioner.trigger();
         
         if(ev == button_hal_press_event){  
             //the red led is blinking and the button of the sensor is pressed
             btn = (button_hal_button_t *)data;
 			printf("Press event");
-			leds_off(LEDS_RED);
-            led_on_red=0;
-            }
+			
+                
+                
+                leds_off(LEDS_YELLOW);
+                led_on=0;
+            
+
+        }
         else{
-        
-            if(led_on_red==1){
-                
-                leds_toggle(LEDS_RED);
-                
+            if (leds_get() & LEDS_YELLOW) {
+                //printf("LEDS_YELLOW is on\n");
+                led_on=1;
+            } 
+            
+
+            if(led_on==1){
+                //printf("rosssoooo");
+                leds_toggle(LEDS_YELLOW);
+                //leds_off(LEDS_GREEN);
             }
             
-            if (leds_get() & LEDS_GREEN) {
-                    printf("LEDS_GREEN is on, so the values of the electromagnetic field are normal\n");
-                    led_on_red=0;
-                    leds_off(LEDS_RED);
-                    leds_off(LEDS_GREEN);
-            }
 
+            
+
+            
             etimer_set(&e_timer, CLOCK_SECOND * 2);
 
         }
 
-   }                   
+  }                             
 
   PROCESS_END();
 }
