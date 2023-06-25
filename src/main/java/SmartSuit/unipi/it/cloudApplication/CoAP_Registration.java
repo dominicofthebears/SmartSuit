@@ -1,7 +1,10 @@
 package SmartSuit.unipi.it.cloudApplication;
 
+import SmartSuit.unipi.it.DatabaseAccess;
 import SmartSuit.unipi.it.cloudApplication.resources.RegistrationResource;
 import org.eclipse.californium.core.CoapServer;
+
+import java.sql.SQLException;
 
 public class CoAP_Registration extends CoapServer implements Runnable {
 
@@ -15,6 +18,7 @@ public class CoAP_Registration extends CoapServer implements Runnable {
     }
 
     public void run() {
+
         CoAP_Registration server = new CoAP_Registration();
         server.add(new RegistrationResource("registration"));
         server.start();

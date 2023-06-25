@@ -36,6 +36,7 @@ public class MQTT_Collector implements MqttCallback, Runnable  {
                 mqttClient.subscribe(t);
             }
         } catch (MqttException e){
+
             System.out.println("Could not connect to the publisher");
         }
 
@@ -43,6 +44,7 @@ public class MQTT_Collector implements MqttCallback, Runnable  {
 
     @Override
     public void connectionLost(Throwable throwable) {
+
         System.out.println("Connection lost with the queues");
     }
 
@@ -54,16 +56,18 @@ public class MQTT_Collector implements MqttCallback, Runnable  {
         try {
             String data = new String(mqttMessage.getPayload(), StandardCharsets.UTF_8);
             obj = (JSONObject) parser.parse(data);
+
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
 
         try{
-            int modified = DatabaseAccess.insertData((Integer) obj.get("value"), topic);
+            int modified = DatabaseAccess.insertData((Long) obj.get("value"), topic);  //using Long since JSON parser
             if (modified < 1){
                 System.err.println("DataBase error: could not insert new data");
             }
         }catch (SQLException e){
+
             System.err.println("DataBase error: cannot connect");
         }
 

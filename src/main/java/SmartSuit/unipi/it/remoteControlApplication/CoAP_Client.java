@@ -24,31 +24,35 @@ public class CoAP_Client {
 
         if(isDanger.get(resource) && action.equals("OFF")){
             System.err.println("There is a danger, you cannot turn off the actuator");
-            return;
+            //return;
         }
+        else {
+            CoapClient client = new CoapClient("coap://[" + ip + "]/" + resource);
 
-        CoapClient client = new CoapClient("coap://" + ip + "/" + resource);
+            JSONObject object = new JSONObject();
+            object.put("threshold", overThreshold);
+            object.put("action", action);
 
-        JSONObject object = new JSONObject();
-        object.put("threshold", overThreshold);
-        object.put("action", action);
+            CoapResponse response = client.put(object.toJSONString().replace("\"",""), MediaTypeRegistry.APPLICATION_JSON);
 
-        CoapResponse response = client.put(object.toJSONString(), MediaTypeRegistry.APPLICATION_JSON);
 
-        if (response == null) {
-            System.err.println("An error occurred while contacting the actuator");
-        } else {
-            CoAP.ResponseCode code = response.getCode();
-            switch (code) {
-                case CHANGED:
-                    System.err.println("State correctly changed because of danger or user input");
-                    DatabaseAccess.updateActuators(ip, resource, action);
-                    break;
-                case BAD_OPTION:
-                    System.err.println("Parameters error");
-                    break;
+
+            if (response == null) {
+                System.err.println("An error occurred while contacting the actuator");
+            } else {
+                CoAP.ResponseCode code = response.getCode();
+                //System.out.println(code);
+                switch (code) {
+                    case CHANGED:
+                        System.err.println("State correctly changed because of danger or user input");
+                        DatabaseAccess.updateActuators("/" + ip, resource, action);
+                        break;
+                    case BAD_OPTION:
+                        System.err.println("Parameters error");
+                        break;
+                }
+
             }
-
         }
     }
 

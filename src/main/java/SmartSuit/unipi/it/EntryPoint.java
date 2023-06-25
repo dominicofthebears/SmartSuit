@@ -15,10 +15,10 @@ public class EntryPoint {
         ScheduledExecutorService executorService = null;
         try {
             executorService = Executors.newScheduledThreadPool(4);
-            executorService.schedule(CommandLineInterface.getInstance(), 5, TimeUnit.SECONDS);
+            executorService.schedule(CommandLineInterface.getInstance(), 45, TimeUnit.SECONDS);
             executorService.schedule(CoAP_Registration.getInstance(), 0, TimeUnit.SECONDS);
             executorService.schedule(MQTT_Collector.getInstance(), 0, TimeUnit.SECONDS);
-            executorService.scheduleAtFixedRate(PeriodicDataRetrieval.getInstance(), 20, 7, TimeUnit.SECONDS);
+            executorService.scheduleAtFixedRate(PeriodicDataRetrieval.getInstance(), 45, 7, TimeUnit.SECONDS);
         } catch (Exception e) {
             executorService.shutdown();
         }

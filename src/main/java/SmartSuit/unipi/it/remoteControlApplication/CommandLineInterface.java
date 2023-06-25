@@ -66,29 +66,28 @@ public class CommandLineInterface implements Runnable{
                     break;
 
                 case 8:
-                    printActuatorsStatus();
+                    try {
+                        printActuatorsStatus();
+                    } catch (SQLException e) {
+                        System.out.println("impossible to retrieve actuator status");
+                    }
                     break;
             }
         }
 
     }
 
-    private static void printActuatorsStatus() {
-        HashMap<String, Boolean> danger = CoAP_Client.getIsDanger();
-        for(String key: danger.keySet()){
-            if(danger.get(key)){
-                System.out.println("The " + key + " sensor is: ON");
-            }
-            else{
-                System.out.println("The " + key + " sensor is: OFF");
-            }
+    private static void printActuatorsStatus() throws SQLException {
+        String[] actuators = new String[]{"gas", "electromagnetic", "radiation"};
+        for(String key: actuators){
+            System.out.println("The " + key + " actuator status is: " + DatabaseAccess.retrieveActuator(key).get("status"));
         }
     }
-
     private static void changeStatus(String actuator, Scanner s) {
         try{
             System.out.println("Would you like to turn the actuator ON or OFF?: ");
             String input = (s.nextLine().trim());
+            System.out.println(input);
             HashMap<String, String> act = DatabaseAccess.retrieveActuator(actuator);
             if(Objects.equals(act.get("status"), input)){
                 System.out.println("Actuator already in this status");
@@ -128,7 +127,8 @@ public class CommandLineInterface implements Runnable{
                 "4 - Select a new value for the gas threshold\n" +
                 "5 - Change the status of the radiation shield\n" +
                 "6 - Change the status of the oxygen flow system\n" +
-                "7 - Change the status of the electromagnetic shield");
+                "7 - Change the status of the electromagnetic shield\n"+
+                "8 - Check the actuators status");
     }
 
 }

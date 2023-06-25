@@ -5,14 +5,14 @@ import java.time.Instant;
 import java.util.HashMap;
 
 public class DatabaseAccess {
-    private static final String url = "jdbc:mysql://localhost:3306/SmartSuit";
+    private static final String url = "jdbc:mysql://localhost:3306/smartsuit";
     private static final String username = "root";
-    private static final String password = "smartsuit";
+    private static final String password = "ubuntu";
 
     public static int updateActuators(String address, String actuatorType, String status) throws SQLException {
         Connection connection = DriverManager.getConnection(url, username, password);
         PreparedStatement ps = connection.prepareStatement("REPLACE INTO actuators (ip, actuator_type, status) VALUES(?,?,?);");
-        ps.setString(1, address); //substring(1)
+        ps.setString(1, address.substring(1)); //substring(1)
         ps.setString(2, actuatorType);
         ps.setString(3, status);
         ps.executeUpdate();
@@ -32,25 +32,29 @@ public class DatabaseAccess {
         return result;
     }
 
-    public static int insertData(Integer value, String type) throws SQLException {
+    public static int insertData(Long value, String type) throws SQLException {
         Connection connection = DriverManager.getConnection(url, username, password);
-        PreparedStatement ps = connection.prepareStatement("INSERT INTO data (value, sensor, timestamp) VALUES(?,?,?);");
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO data (value, sensor) VALUES(?,?);");
+
         ps.setString(1, String.valueOf(value)); //substring(1)
         ps.setString(2, type);
-        ps.setString(3, String.valueOf(Instant.now()));
-        ps.executeUpdate();
+        //ps.setString(3, String.valueOf(Instant.now()));
+        ps.execute();
+        //System.out.println(ps.getUpdateCount());
         return ps.getUpdateCount();
     }
 
     public static HashMap<String, Integer> retrieveData() throws SQLException{
         HashMap<String, Integer> result = new HashMap<>();
         Connection connection = DriverManager.getConnection(url, username, password);
-        PreparedStatement ps = connection.prepareStatement("SELECT value, sensor, MAX(timestamp) FROM data GROUP BY sensor");
+        PreparedStatement ps = connection.prepareStatement("SELECT sensor, value  FROM data WHERE (sensor, timestamp) IN (SELECT sensor, MAX(timestamp) FROM data GROUP BY sensor)");
         ResultSet rs = ps.executeQuery();
         while(rs.next()){
                result.put(rs.getString("sensor"), rs.getInt("value"));
         }
         rs.close();
+        //System.out.println(result);
         return result;
     }
+
 }
