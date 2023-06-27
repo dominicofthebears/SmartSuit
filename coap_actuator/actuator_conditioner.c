@@ -18,6 +18,7 @@
 static char *service_url = "/registration";
 static coap_endpoint_t server_ep;
 static coap_message_t request[1]; 
+static bool registered=false;
 
 void client_chunk_handler(coap_message_t *response)
 {
@@ -29,6 +30,7 @@ void client_chunk_handler(coap_message_t *response)
         LOG_INFO("Registration successful\n");
         int len = coap_get_payload(response, &chunk);
         printf("|%.*s", len, (char *)chunk);
+        registered=true;
 }
 
 extern coap_resource_t  res_gas; 
@@ -45,20 +47,21 @@ PROCESS_THREAD(conditioner_thread, ev, data)
 
   //PROCESS_PAUSE();
 
-    // REGISTRATION--------------------------------------
-    // Populate the coap_endpoint_t data structure
-    coap_endpoint_parse(SERVER_EP, strlen(SERVER_EP), &server_ep);
-    // Prepare the message
-    coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
-    coap_set_header_uri_path(request, service_url);
-    // Set the payload 
-    const char msg[] = "{\"type\":\"gas\"}";
-    coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
+    while(!registered){
+        // REGISTRATION--------------------------------------
+        // Populate the coap_endpoint_t data structure
+        coap_endpoint_parse(SERVER_EP, strlen(SERVER_EP), &server_ep);
+        // Prepare the message
+        coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
+        coap_set_header_uri_path(request, service_url);
+        // Set the payload 
+        const char msg[] = "{\"type\":\"gas\"}";
+        coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
 
-    COAP_BLOCKING_REQUEST(&server_ep, request, client_chunk_handler);
+        COAP_BLOCKING_REQUEST(&server_ep, request, client_chunk_handler);
 
-    // END REGISTRATION -------------------------------------------
-
+        // END REGISTRATION -------------------------------------------
+    }
 
   LOG_INFO("Starting actuator against gas\n");
 
