@@ -56,5 +56,9 @@ public class DatabaseAccess {
         //System.out.println(result);
         return result;
     }
-
+    public static void resetActuators() throws SQLException{
+        Connection connection = DriverManager.getConnection(url, username, password);
+        PreparedStatement ps = connection.prepareStatement("DELETE from actuators");
+        ps.executeUpdate();
+    }
 }

@@ -18,7 +18,11 @@ public class CoAP_Registration extends CoapServer implements Runnable {
     }
 
     public void run() {
-
+        try {
+            DatabaseAccess.resetActuators();
+        } catch (SQLException e) {
+            System.out.println("impossible to reset actuators table");
+        }
         CoAP_Registration server = new CoAP_Registration();
         server.add(new RegistrationResource("registration"));
         server.start();
