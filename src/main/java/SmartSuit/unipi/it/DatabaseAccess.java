@@ -25,11 +25,16 @@ public class DatabaseAccess {
         PreparedStatement ps = connection.prepareStatement("SELECT ip, status FROM actuators WHERE actuator_type = ?");
         ps.setString(1, actuatorType);
         ResultSet rs = ps.executeQuery();
-        rs.next();
-        result.put("ip", rs.getString("ip"));
-        result.put("status", rs.getString("status"));
-        rs.close();
-        return result;
+        if(!rs.next()){
+            return result; //empty at this point
+        }else {
+
+            result.put("ip", rs.getString("ip"));
+            result.put("status", rs.getString("status"));
+            rs.close();
+
+            return result;
+        }
     }
 
     public static int insertData(Long value, String type) throws SQLException {

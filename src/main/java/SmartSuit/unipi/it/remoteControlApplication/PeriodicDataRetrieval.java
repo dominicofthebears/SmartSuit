@@ -30,23 +30,24 @@ public class PeriodicDataRetrieval implements Runnable{ //singleton class
                 System.out.println("Could not retrieve any data");
             }
             else{
-                for(String key : values.keySet()){
+                for(String key : values.keySet()) {
                     HashMap<String, String> act = DatabaseAccess.retrieveActuator(key);
 
-                    if(values.get(key) > thresholds.get(key)){
+                    if (!act.isEmpty()) {
+                        //System.out.println("act is not empty");
+                        if (values.get(key) > thresholds.get(key)) {
+                            CoAP_Client.setIsDanger(key, true);
+                            if (act.get("status").equals("OFF")) {
+                                System.err.println("Danger detected on " + key + " sensor, advertising the actuator");
+                                CoAP_Client.actuatorCall(act.get("ip"), key, "ON", 1);
+                            }
+                        } else {
 
-                        CoAP_Client.setIsDanger(key, true);
-                        if(act.get("status").equals("OFF")){
-                            System.err.println("Danger detected on " + key + " sensor, advertising the actuator");
-                            CoAP_Client.actuatorCall(act.get("ip"), key, "ON", 1);
-                        }
-                    }
-                    else{
-
-                        CoAP_Client.setIsDanger(key, false); //turning off the actuator if under 30% of the threshold
-                        if (values.get(key) < thresholds.get(key)*0.3 && act.get("status").equals("ON")) {
-                            System.err.println("Turning off the " + key + " actuator since there is no danger");
-                            CoAP_Client.actuatorCall(act.get("ip"), key, "OFF", 0);
+                            CoAP_Client.setIsDanger(key, false); //turning off the actuator if under 30% of the threshold
+                            if (values.get(key) < thresholds.get(key) * 0.3 && act.get("status").equals("ON")) {
+                                System.err.println("Turning off the " + key + " actuator since there is no danger");
+                                CoAP_Client.actuatorCall(act.get("ip"), key, "OFF", 0);
+                            }
                         }
                     }
                 }
