@@ -58,7 +58,8 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
     int value_int = atoi(threshold);
     if(value_int==1){
           //critic value of gas, and the action on led and emshield are obliged
-          leds_on(LEDS_YELLOW);
+          leds_on(LEDS_GREEN);
+          leds_on(LEDS_RED);  //red and green on --> yellow
           LOG_INFO("start emshield because electromagnetic value critic\n");
 
           printf("status :%d\n",emshield_status);
@@ -69,7 +70,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
               
           }
           emshield_status=1;
-          leds_on(LEDS_GREEN);
+          //leds_on(LEDS_GREEN);
         
     }
     else{

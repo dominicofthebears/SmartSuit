@@ -35,7 +35,7 @@ void client_chunk_handler(coap_message_t *response)
 
 extern coap_resource_t  res_gas; 
 
-static char led_on_color[10] = "yellow";
+//static int danger=0; //1 danger 0 not
 
 
 PROCESS(conditioner_thread, "conditioner");
@@ -46,6 +46,9 @@ PROCESS_THREAD(conditioner_thread, ev, data)
   PROCESS_BEGIN();
 
   //PROCESS_PAUSE();
+  leds_off(LEDS_RED);
+  leds_off(LEDS_GREEN);
+  leds_off(LEDS_YELLOW);
 
     while(!registered){
         // REGISTRATION--------------------------------------
@@ -71,11 +74,10 @@ PROCESS_THREAD(conditioner_thread, ev, data)
   
   etimer_set(&e_timer, CLOCK_SECOND * 2);
   
-  printf("ciao\n");
-
-  printf("%s\n",led_on_color);
-
-  //leds_on(LEDS_GREEN);
+  leds_off(LEDS_RED);
+  leds_off(LEDS_GREEN);
+  leds_off(LEDS_YELLOW);
+  
 
   button_hal_button_t *btn; 
 	
@@ -97,56 +99,39 @@ PROCESS_THREAD(conditioner_thread, ev, data)
         PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&e_timer) || ev==button_hal_press_event);
         //res_conditioner.trigger();
         
-        if(ev == button_hal_press_event){  
+        if(ev == button_hal_press_event && (leds_get() & LEDS_RED)){  
             //the red led is blinking and the button of the sensor is pressed
             btn = (button_hal_button_t *)data;
 			printf("Press event");
-			if (strcmp(led_on_color, "red") == 0) {
+			//if (danger==1) {
                 printf("Button pressed while LED is red\n");
                 
                 
                 leds_off(LEDS_RED);
-                strcpy(led_on_color,"yellow");
-            } 
+                //danger=0;
+                leds_on(LEDS_GREEN);
+            //} 
+
 
         }
-        else{
-            if (leds_get() & LEDS_RED) {
-                //printf("LEDS_RED is on\n");
-                strcpy(led_on_color,"red");
-            } else {
-                    //printf("LEDS_RED is off\n");
-            }
+        etimer_set(&e_timer, CLOCK_SECOND * 2);
+        /*else{
+            printf("%d\n",leds_get()&(LEDS_NUM_TO_MASK(LEDS_RED)));
+            if ((leds_get() & LEDS_RED) && danger==0) {
+                printf("LEDS_RED is on\n");
+                danger=1;
+            } 
 
-            if (leds_get() & LEDS_YELLOW) {
-                    //printf("LEDS_GREEN is on\n");
-                    //situazione non critica smette di lampeggiare di rosso
-                    strcpy(led_on_color,"yellow");
-            } else {
-                    //printf("LEDS_GREEN is off\n");
-            }
-            //printf("led on is:%s\n",led_on_color);
-
-            //printf("size %zu %zu\n",strlen(led_on_color),strlen("red"));
-            
-
-            if(strcmp(led_on_color,"red")==0){
+            if(danger==1){
                 //printf("rosssoooo");
                 leds_toggle(LEDS_RED);
-                //leds_off(LEDS_GREEN);
+                
             }
-            else if(strcmp(led_on_color,"yellow")==0){
-                //printf("greeeeeeen");
-                //leds_toggle(LEDS_GREEN);
-                leds_off(LEDS_YELLOW);
-            }
-
-            
-
+        
             
             etimer_set(&e_timer, CLOCK_SECOND * 2);
 
-        }
+        }*/
 
   }                             
 

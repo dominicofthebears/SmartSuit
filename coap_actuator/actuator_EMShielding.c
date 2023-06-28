@@ -35,7 +35,7 @@ void client_chunk_handler(coap_message_t *response)
 
 extern coap_resource_t  res_electromagnetic; 
 
-static int led_on = 0;  //0 red led off, 1 red led on
+//static int led_on = 0;  //0 red led off, 1 red led on
 
 
 PROCESS(emshield_thread, "emshield");
@@ -44,6 +44,10 @@ AUTOSTART_PROCESSES(&emshield_thread);
 PROCESS_THREAD(emshield_thread, ev, data)
 {
   PROCESS_BEGIN();
+
+  leds_off(LEDS_RED);
+  leds_off(LEDS_GREEN);
+  leds_off(LEDS_YELLOW);
 
     while(!registered){
         // REGISTRATION--------------------------------------
@@ -95,30 +99,20 @@ PROCESS_THREAD(emshield_thread, ev, data)
         PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&e_timer) || ev==button_hal_press_event);
         //res_conditioner.trigger();
         
-        if(ev == button_hal_press_event){  
+        if(ev == button_hal_press_event && (leds_get() & LEDS_RED)){  
             //the red led is blinking and the button of the sensor is pressed
             btn = (button_hal_button_t *)data;
 			printf("Press event");
-			
+			//if (danger==1) {
+                printf("Button pressed while LED is red\n");
                 
                 
-                leds_off(LEDS_YELLOW);
-                led_on=0;
+                leds_set(LEDS_GREEN);
+            //} 
+
             
 
         }
-        else{
-            if (leds_get() & LEDS_YELLOW) {
-                //printf("LEDS_YELLOW is on\n");
-                led_on=1;
-            } 
-            
-
-            if(led_on==1){
-                //printf("rosssoooo");
-                leds_toggle(LEDS_YELLOW);
-                //leds_off(LEDS_GREEN);
-            }
             
 
             
@@ -126,7 +120,7 @@ PROCESS_THREAD(emshield_thread, ev, data)
             
             etimer_set(&e_timer, CLOCK_SECOND * 2);
 
-        }
+        
 
   }                             
 

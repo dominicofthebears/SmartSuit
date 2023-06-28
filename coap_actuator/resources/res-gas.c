@@ -76,7 +76,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
               
           }
           conditioner_status=1;
-          leds_on(LEDS_GREEN);//if conditioner is already on and arrive a critic value, it has to start to blink, so the yellow led must be off
+          //leds_on(LEDS_GREEN);//if conditioner is already on and arrive a critic value, it has to start to blink, so the yellow led must be off
         
     }
     else{

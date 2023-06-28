@@ -71,9 +71,9 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
     int value_int = atoi(threshold);
     if(value_int==1){
           //critic value of radiation, and the action on led and shielding are obliged
-          leds_on(LEDS_RED);
+          leds_on(LEDS_BLUE);
           
-          leds_on(LEDS_GREEN);
+          //leds_on(LEDS_GREEN);
           LOG_INFO("start shielding because gas value critic\n");
 
           printf("status :%d\n",shielding_status);
