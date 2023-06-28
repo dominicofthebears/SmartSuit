@@ -35,7 +35,6 @@ void client_chunk_handler(coap_message_t *response)
 
 extern coap_resource_t  res_electromagnetic; 
 
-//static int led_on = 0;  //0 red led off, 1 red led on
 
 
 PROCESS(emshield_thread, "emshield");
@@ -69,15 +68,6 @@ PROCESS_THREAD(emshield_thread, ev, data)
 
   coap_activate_resource(&res_electromagnetic, "electromagnetic");
 
-  static struct etimer e_timer;
-  
-  etimer_set(&e_timer, CLOCK_SECOND * 2);
-  
-  //printf("ciao\n");
-
-  //printf("%s\n",led_on_color);
-
-  //leds_on(LEDS_GREEN);
 
   button_hal_button_t *btn; 
 	
@@ -91,36 +81,23 @@ PROCESS_THREAD(emshield_thread, ev, data)
   }
 
   while(1) {
-       //PROCESS_WAIT_EVENT();
-	
-    //if(ev == PROCESS_EVENT_TIMER && data == &e_timer){
-        //printf("Event triggered\n");
-         // Wait until the timer expires or an event occurs
-        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&e_timer) || ev==button_hal_press_event);
-        //res_conditioner.trigger();
+       
+        PROCESS_WAIT_EVENT_UNTIL(ev==button_hal_press_event);
+        
         
         if(ev == button_hal_press_event && (leds_get() & LEDS_RED)){  
-            //the red led is blinking and the button of the sensor is pressed
+            //the red led showes danger and the button of the sensor is pressed
             btn = (button_hal_button_t *)data;
 			printf("Press event");
-			//if (danger==1) {
+			
                 printf("Button pressed while LED is red\n");
                 
                 
                 leds_set(LEDS_GREEN);
-            //} 
-
             
-
         }
             
 
-            
-
-            
-            etimer_set(&e_timer, CLOCK_SECOND * 2);
-
-        
 
   }                             
 

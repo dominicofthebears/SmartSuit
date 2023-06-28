@@ -35,8 +35,6 @@ void client_chunk_handler(coap_message_t *response)
 
 extern coap_resource_t  res_gas; 
 
-//static int danger=0; //1 danger 0 not
-
 
 PROCESS(conditioner_thread, "conditioner");
 AUTOSTART_PROCESSES(&conditioner_thread);
@@ -70,13 +68,6 @@ PROCESS_THREAD(conditioner_thread, ev, data)
 
   coap_activate_resource(&res_gas, "gas");
 
-  static struct etimer e_timer;
-  
-  etimer_set(&e_timer, CLOCK_SECOND * 2);
-  
-  leds_off(LEDS_RED);
-  leds_off(LEDS_GREEN);
-  leds_off(LEDS_YELLOW);
   
 
   button_hal_button_t *btn; 
@@ -91,47 +82,24 @@ PROCESS_THREAD(conditioner_thread, ev, data)
   }
 
   while(1) {
-       //PROCESS_WAIT_EVENT();
-	
-    //if(ev == PROCESS_EVENT_TIMER && data == &e_timer){
-        //printf("Event triggered\n");
-         // Wait until the timer expires or an event occurs
-        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&e_timer) || ev==button_hal_press_event);
+      
+         // Wait until an event occurs
+        PROCESS_WAIT_EVENT_UNTIL(ev==button_hal_press_event);
         //res_conditioner.trigger();
         
         if(ev == button_hal_press_event && (leds_get() & LEDS_RED)){  
             //the red led is blinking and the button of the sensor is pressed
             btn = (button_hal_button_t *)data;
 			printf("Press event");
-			//if (danger==1) {
-                printf("Button pressed while LED is red\n");
-                
+			
+                //printf("Button pressed while LED is red\n"); 
                 
                 leds_off(LEDS_RED);
-                //danger=0;
+               
                 leds_on(LEDS_GREEN);
-            //} 
-
-
-        }
-        etimer_set(&e_timer, CLOCK_SECOND * 2);
-        /*else{
-            printf("%d\n",leds_get()&(LEDS_NUM_TO_MASK(LEDS_RED)));
-            if ((leds_get() & LEDS_RED) && danger==0) {
-                printf("LEDS_RED is on\n");
-                danger=1;
-            } 
-
-            if(danger==1){
-                //printf("rosssoooo");
-                leds_toggle(LEDS_RED);
-                
-            }
         
-            
-            etimer_set(&e_timer, CLOCK_SECOND * 2);
-
-        }*/
+        }
+   
 
   }                             
 

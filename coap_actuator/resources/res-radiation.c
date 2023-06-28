@@ -15,35 +15,14 @@
 
 static uint8_t shielding_status =0;  //0 off, 1 on
 
-//static void res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
-//static void res_event_handler(void);
 static void res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 
-/* A simple actuator example, depending on the color query parameter and post variable action, corresponding led is activated or deactivated */
 RESOURCE(res_radiation,
          "title=\"radiation:?value=0|1 \" PUT action=<action> ;rt=\"Control\"",
          NULL,
          NULL,
          res_put_handler,
          NULL);
-
-//static int last_value=0;
-
-
-/*static void
-res_event_handler(void)
-{
-    // Notify all the observers
-    coap_notify_observers(&res_shielding);
-}*/
-
-
-/*static void
-res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
-{
-  coap_set_header_content_format(response, TEXT_PLAIN);
-  coap_set_payload(response, buffer, snprintf((char *)buffer, preferred_size, "LAST_VALUE %lu\n", (unsigned long) last_value));
-}*/
 
 static void
 res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
@@ -73,17 +52,17 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
           //critic value of radiation, and the action on led and shielding are obliged
           leds_on(LEDS_BLUE);
           
-          //leds_on(LEDS_GREEN);
           LOG_INFO("start shielding because gas value critic\n");
 
-          printf("status :%d\n",shielding_status);
+          //printf("status :%d\n",shielding_status);
+
           if(shielding_status==0){
               LOG_INFO("status is changing\n");
               coap_set_status_code(response, CHANGED_2_04);
               
           }
           shielding_status=1;
-          //leds_on(LEDS_YELLOW);
+
         
     }
     else{

@@ -231,7 +231,7 @@ PROCESS_THREAD(mqtt_client_em, ev, data)
 				    
   // Initialize periodic timer to check the status 
   etimer_set(&periodic_timer, STATE_MACHINE_PERIODIC);
-  // YOU  SETTA ALTRI TIMER SE SERVONO
+  
 
   /* Main loop */
   while(1) {
@@ -261,7 +261,7 @@ PROCESS_THREAD(mqtt_client_em, ev, data)
 		  if(state==STATE_CONNECTED){
 		  
 			  // Subscribe to a topic
-			  strcpy(sub_topic,"actuator_em");  //YOU DA CAMBIARE STRINGA PER ATTUATORE
+			  strcpy(sub_topic,"actuator_em");  
 
 			  status = mqtt_subscribe(&conn, NULL, sub_topic, MQTT_QOS_LEVEL_0);
 

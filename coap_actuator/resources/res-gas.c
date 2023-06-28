@@ -17,11 +17,8 @@
 
 static uint8_t conditioner_status =0;  //0 off, 1 on
 
-//static void res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
-//static void res_event_handler(void);
 static void res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 
-/* A simple actuator example, depending on the color query parameter and post variable action, corresponding led is activated or deactivated */
 RESOURCE(res_gas,
          "title=\"gas:?value=0|1 \" PUT action=<action> ;rt=\"Control\"",
          NULL,
@@ -64,11 +61,9 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
     if(value_int==1){
           //critic value of gas, and the action on led and conditioner are obliged
           leds_on(LEDS_RED);
-          //leds_off(LEDS_GREEN);
-          //LOG_INFO("status :%d\n",conditioner_status);
+          
           LOG_INFO("start conditioner because gas value critic\n");
 
-          
 
           if(conditioner_status==0){
               LOG_INFO("status is changing\n");
@@ -76,18 +71,11 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
               
           }
           conditioner_status=1;
-          //leds_on(LEDS_GREEN);//if conditioner is already on and arrive a critic value, it has to start to blink, so the yellow led must be off
         
     }
     else{
         
-          //leds_on(LEDS_YELLOW);
-          //leds_off(LEDS_RED);
-          LOG_DBG("action: %s\n", action);
-          //LOG_INFO("stop conditioner because gas value no critic\n");
-          //coap_set_status_code(response, CHANGED_2_04);
-          //leds_off(LEDS_GREEN);
-
+         
           //critic value of gas are not critic, the user can also turn on or turn off the conditioner
           if ((action!=NULL && strlen(action)!=0)){
               LOG_DBG("action: %s\n", action);

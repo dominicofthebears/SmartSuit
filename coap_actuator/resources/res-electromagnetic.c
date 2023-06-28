@@ -15,11 +15,8 @@
 
 static uint8_t emshield_status =0;  //0 off, 1 on
 
-//static void res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
-//static void res_event_handler(void);
 static void res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 
-/* A simple actuator example, depending on the color query parameter and post variable action, corresponding led is activated or deactivated */
 RESOURCE(res_electromagnetic,
          "title=\"electromagnetic:?value=0|1 \" PUT action=<action> ;rt=\"Control\"",
          NULL,
@@ -41,8 +38,6 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
 
   printf("request_json:%s\n", chunk);
 
-  
-
   LOG_DBG("handler\n");
 
   if(len>0){
@@ -62,7 +57,7 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
           leds_on(LEDS_RED);  //red and green on --> yellow
           LOG_INFO("start emshield because electromagnetic value critic\n");
 
-          printf("status :%d\n",emshield_status);
+          //printf("status :%d\n",emshield_status);
 
           if(emshield_status==0){
               LOG_INFO("status is changing\n");
@@ -70,15 +65,10 @@ res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buff
               
           }
           emshield_status=1;
-          //leds_on(LEDS_GREEN);
         
     }
     else{
-          //leds_on(LEDS_GREEN);  
-          //leds_off(LEDS_YELLOW);
-          //LOG_INFO("stop emshield because gas value no critic\n");
-          //coap_set_status_code(response, CHANGED_2_04);
-          //leds_off(LEDS_YELLOW);
+         
 
           //critic value of gas are not critic, the user can also turn on or turn off the emshield
           if ((action!=NULL && strlen(action)!=0)){
