@@ -124,7 +124,7 @@ public class CommandLineInterface implements Runnable{
                 "1 - Help list\n" +
                 "2 - Select a new value for the radiation threshold\n" +
                 "3 - Select a new value for the gas threshold\n" +
-                "4 - Select a new value for the gas threshold\n" +
+                "4 - Select a new value for the electromagnetic threshold\n" +
                 "5 - Change the status of the radiation shield\n" +
                 "6 - Change the status of the oxygen flow system\n" +
                 "7 - Change the status of the electromagnetic shield\n"+
